@@ -37,7 +37,7 @@ class WeathersitImputer(BaseEstimator, TransformerMixin):
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         X = X.copy()
         X[self.variables]=X[self.variables].fillna(self.fill_value)
-        # print('weathersit imputation is done.... fill value:', self.fill_value)
+        # print('weathersit imputation is done.... fill value:', self.fill_value, X[self.variables].isna().sum())
         return X
     
 

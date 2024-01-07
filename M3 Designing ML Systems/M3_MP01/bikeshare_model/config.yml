@@ -24,8 +24,8 @@ features: # final features to be use
   - windspeed
   - yr
   - mnth
-  - weekday
-  - dteday
+  # - weekday
+  # - dteday
 
 unused_fields:  # Features to drop before pipeline
   - casual

@@ -9,9 +9,11 @@ import re
 import joblib
 import pandas as pd
 from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder
 
 from bikeshare_model import __version__ as _version
 from bikeshare_model.config.core import DATASET_DIR, TRAINED_MODEL_DIR, config
+from bikeshare_model.processing.features import WeathersitImputer
 
 ##  Pre-Pipeline Preparation
 
@@ -26,6 +28,23 @@ def get_year_and_month(dataframe :pd.DataFrame) -> pd.DataFrame:
     df[config.model_config.mnth_var] = df[config.model_config.dteday_var].dt.month_name()
     return df
 
+def weekday_imputer(df: pd.DataFrame) -> pd.DataFrame:
+    # df = X.copy()
+    wkday_null_idx = df[df[config.model_config.weekday_var].isnull() == True].index
+    df.loc[wkday_null_idx, config.model_config.weekday_var] = df.loc[wkday_null_idx, config.model_config.dteday_var].dt.day_name().apply(lambda x: x[:3])
+    # print("Weekday imputation is done...")
+    return df
+
+def weekday_oneHotEncoder(X: pd.DataFrame):
+    encoder_ = OneHotEncoder(sparse_output=False)
+    
+    encoded_weekday = encoder_.fit(X[['weekday']]).transform(X[['weekday']])
+    # Get encoded feature names
+    enc_wkday_features = encoder_.get_feature_names_out(['weekday'])
+    X[enc_wkday_features] = encoded_weekday
+    # print(X.head())
+    return X
+
 # 2. processing 
 
 f1=lambda x: 0 if type(x) == float else 1
@@ -33,9 +52,14 @@ f1=lambda x: 0 if type(x) == float else 1
 def pre_pipeline_preparation(*, data_frame: pd.DataFrame) -> pd.DataFrame:
 
     data_frame = get_year_and_month(data_frame)      # Extracts the year and month
-     
+    data_frame = weekday_imputer(data_frame) # Weekday imputation
+    data_frame = weekday_oneHotEncoder(data_frame) #one hot encoding for weekday
+    
+    weatherImputer = WeathersitImputer(variables=config.model_config.weathersit_var)
+    data_frame = weatherImputer.fit(data_frame).transform(data_frame)
     # drop unnecessary variables
-    data_frame.drop(labels=config.model_config.unused_fields, axis=1, inplace=True)
+    cols_to_drop =[col for col in config.model_config.unused_fields if col in data_frame.columns]
+    data_frame.drop(labels=cols_to_drop, axis=1, inplace=True)
      
     return data_frame
 

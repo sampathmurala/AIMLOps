@@ -23,7 +23,7 @@ def make_prediction(*,input_data:Union[pd.DataFrame, dict]) -> dict:
     
     predictions = bikeshare_pipe.predict(validated_data)
     results = {"predictions": predictions,"version": _version}
-    print(results) 
+    # print(results) 
     
     return results
 
@@ -33,4 +33,4 @@ if __name__ == "__main__":
     data_in['dteday'] = pd.to_datetime(data_in['dteday'])
 
     # print(data_in)
-    make_prediction(input_data=data_in)
+    print(make_prediction(input_data=data_in))

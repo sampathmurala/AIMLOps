@@ -20,7 +20,7 @@ def run_training() -> None:
     # read training data
     data = load_dataset(file_name=config.app_config.training_data_file)
     # print('read training data', data.shape)
-    # print(data.head())
+    # print(data.info())
     
     # divide train and test
     # print('divide into train and test sets...')
@@ -32,15 +32,14 @@ def run_training() -> None:
     )
     
     # print(X_train.shape, X_test.shape, y_train.shape, y_test.shape)
-    # print(X_train.head()) 
-    
+ 
     # Pipeline fitting
     bikeshare_pipe.fit(X_train, y_train)
     
+    # print("After fit....") 
     # print(X_test.head(2), X_test.info())
     y_pred = bikeshare_pipe.predict(X_test)
     
-    print(f"'predictions': {y_pred}")
     # Calculate Mean Squared Error (MSE)
     mse = mean_squared_error(y_test, y_pred)
     print(f"mse: {mse}")

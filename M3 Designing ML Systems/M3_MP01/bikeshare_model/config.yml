@@ -24,14 +24,14 @@ features: # final features to be use
   - windspeed
   - yr
   - mnth
-  # - weekday
-  # - dteday
+  - weekday
+  - dteday
 
 unused_fields:  # Features to drop before pipeline
   - casual
   - registered
-  - weekday 
-  - dteday
+  # - weekday 
+  # - dteday
 
 weekday_var: weekday # first imputatation , then --> Mappeing
 

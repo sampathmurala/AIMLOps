@@ -27,7 +27,7 @@ def sample_input_data():
     # print(X_test.shape)
     # # print(X_test.info(), "\n")
     # print(X_test['weathersit'])
-    # print(X_test[X_test.weathersit.isna() == True].index)
+    print(X_test[X_test.weathersit.isna() == True].index)
     # print(X_test.loc[12230, 'weathersit'])
     # print("sample_input_data end...")
     return X_test

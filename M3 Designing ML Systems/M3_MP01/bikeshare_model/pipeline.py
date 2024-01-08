@@ -17,8 +17,8 @@ from bikeshare_model.processing.features import WeekdayOneHotEncoder
 
 bikeshare_pipe=Pipeline([
 
-    # ('weathersit_imputation', WeathersitImputer(variables=config.model_config.weathersit_var)),
-    # ('weekday_imputation', WeekdayImputer(variables=config.model_config.weekday_var)),
+    ('weathersit_imputation', WeathersitImputer(variables=config.model_config.weathersit_var)),
+    ('weekday_imputation', WeekdayImputer(variables=config.model_config.weekday_var)),
     ##==========Mapper======##
     ('map_yr',Mapper(config.model_config.yr_var, config.model_config.yr_mapping)),
     ('map_mnth',Mapper(config.model_config.mnth_var, config.model_config.mnth_mapping )),
@@ -33,7 +33,7 @@ bikeshare_pipe=Pipeline([
     ('outlier_hum', OutlierHandler(config.model_config.hum_var)),
     ('outlier_windspeed', OutlierHandler(config.model_config.windspeed_var)),
     #weekday OneHotEncoder
-    # ('Weekday_OneHot', WeekdayOneHotEncoder()),
+    ('Weekday_OneHot', WeekdayOneHotEncoder()),
     # scale
     ('scaler', StandardScaler()),
     ('regressor', RandomForestRegressor(n_estimators=config.model_config.n_estimators, max_depth=config.model_config.max_depth, random_state=config.model_config.random_state))

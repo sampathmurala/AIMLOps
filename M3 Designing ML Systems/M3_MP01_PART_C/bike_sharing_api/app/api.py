@@ -36,11 +36,11 @@ def health() -> dict:
 
 @api_router.post("/predict", response_model=schemas.PredictionResults, status_code=200)
 async def predict(input_data: schemas.MultipleDataInputs) -> Any:
-    # print(input_data)
+    print("........ predict started ..........")
     input_df = pd.DataFrame(jsonable_encoder(input_data.inputs))
-    
+    print(input_df.info())
     results = make_prediction(input_data=input_df.replace({np.nan: None}))
-    # print(results)
+
     if results["errors"] is not None:
         raise HTTPException(status_code=400, detail=json.loads(results["errors"]))
 

@@ -31,7 +31,7 @@ class MultipleDataInputs(BaseModel):
                         "yr": 2012,
                         "mnth": 'April',
                         "weekday": 'Sun',
-                        "dteday": '2012-04-22',
+                        "dteday": '2012-04-22T00:00:00',
                     }
                 ]
             }

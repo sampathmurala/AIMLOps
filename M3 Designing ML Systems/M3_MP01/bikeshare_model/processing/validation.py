@@ -15,9 +15,10 @@ from bikeshare_model.processing.data_manager import pre_pipeline_preparation
 
 def validate_inputs(*, input_df: pd.DataFrame) -> Tuple[pd.DataFrame, Optional[dict]]:
     """Check model inputs for unprocessable values."""
-
     pre_processed = pre_pipeline_preparation(data_frame=input_df)
+    # print(pre_processed.info(), config.model_config.features)    
     validated_data = pre_processed[config.model_config.features].copy()
+    # print(validated_data.to_dict(orient="records"))
     errors = None
 
     try:
@@ -26,6 +27,7 @@ def validate_inputs(*, input_df: pd.DataFrame) -> Tuple[pd.DataFrame, Optional[d
             inputs=validated_data.replace({np.nan: None}).to_dict(orient="records")
         )
     except ValidationError as error:
+        print(error)
         errors = error.json()
 
     return validated_data, errors
@@ -41,9 +43,9 @@ class DataInputSchema(BaseModel):
     hum: Optional[float]
     windspeed: Optional[float]
     yr: Optional[int]
-    mnth: Optional[int]
+    mnth: Optional[str]
     weekday: Optional[str]
-    dteday: Optional[str]
+    dteday: Optional[pd.Timestamp]
 
 
 class MultipleDataInputs(BaseModel):

@@ -3,29 +3,23 @@ name: Push a Docker Image
 on:
   push:
     branches:
-      - develop
+      - main
   workflow_dispatch:
 
 jobs:
   train:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v2  # Update to the latest version
+      - uses: actions/checkout@v2 # Use v2 instead of v3, as v3 is not available for checkout
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v2 # Use v2 instead of v3
         with:
-          python-version: '3.11'
-
+          python-version: '3.10'
       - name: Install dependencies
         run: pip install -r requirements/requirements.txt
-
       - name: Train and save pipeline
         run: python titanic_model/train_pipeline.py
-
-      - name: Upload trained pipeline artifact
-        uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v2
         with:
           name: my-trained-pipeline
           path: titanic_model/trained_models/*.pkl
@@ -35,23 +29,17 @@ jobs:
     needs: train
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v2  # Update to the latest version
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v2
         with:
-          python-version: '3.11'
-
-      - name: Download trained pipeline artifact
-        uses: actions/download-artifact@v2
+          python-version: '3.10'
+      - uses: actions/download-artifact@v2
         with:
           name: my-trained-pipeline
           path: titanic_model/trained_models
-
       - name: Install dependencies
         run: pip install -r requirements/test_requirements.txt
-
       - name: Test with pytest
         run: pytest
 
@@ -59,28 +47,20 @@ jobs:
     needs: [train, test]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v2  # Update to the latest version
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v2
         with:
-          python-version: '3.11'
-
-      - name: Download trained pipeline artifact
-        uses: actions/download-artifact@v2
+          python-version: '3.10'
+      - uses: actions/download-artifact@v2
         with:
           name: my-trained-pipeline
           path: titanic_model/trained_models
-
       - name: Install dependencies
         run: pip install --upgrade build
-
       - name: Build package
         run: python -m build
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v2
         with:
           name: my-build-package
           path: dist/*.whl
@@ -92,28 +72,22 @@ jobs:
     steps:
       - name: Repo Checkout
         uses: actions/checkout@v2
-
-      - name: Download build artifact
-        uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v2
         with:
           name: my-build-package
           path: titanic_model_api
-
       - name: Login to Docker hub
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER_NAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASS_TOKEN }}
         run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-
       - name: Build the Docker image for Fastapi app
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER_NAME }}
         run: docker build . -f Dockerfile -t $DOCKER_USER/titanic-fastapi:latest
-
       - name: Push the Docker Image
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER_NAME }}
         run: docker push $DOCKER_USER/titanic-fastapi
-
-      - name: Logout from Docker hub
+      - name: Logout to Docker hub
         run: docker logout

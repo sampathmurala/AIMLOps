@@ -15,7 +15,6 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: '3.11'
-          node-version: 20
       - name: Install dependencies
         run: pip install -r requirements/requirements.txt
       - name: Train and save pipeline
@@ -35,7 +34,6 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: '3.11'
-          node-version: 20
       - uses: actions/download-artifact@v2
         with:
           name: my-trained-pipeline
@@ -54,7 +52,6 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: '3.11'
-          node-version: 20
       - uses: actions/download-artifact@v2
         with:
           name: my-trained-pipeline
